@@ -1,0 +1,36 @@
+# Dependency directories
+node_modules/
+public/
+
+# Environment variables file
+.env
+config.env
+*.env
+
+# Log files
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Compiled binary addons (node-gyp)
+build/Release
+
+# Distribution directory
+dist/
+
+# Yarn integrity file
+.yarn-integrity
+
+# Optional npm package locks
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
