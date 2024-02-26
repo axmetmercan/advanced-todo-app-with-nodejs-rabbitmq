@@ -1,5 +1,21 @@
-# advanced-todo-app-with-nodejs-rabbitmq
-This is an todo application that i improved my tech stack with new library and frameworks.
-# API Documentation
-You can find the postman api documentation that application by following the link
-https://documenter.getpostman.com/view/17549703/2sA2rDxgJi
+
+#Advanced Todo App with Node.js and RabbitMQ
+This is a todo application where I expanded my tech stack by integrating new libraries and frameworks.
+
+#API Documentation
+Explore the API documentation using Postman: API Documentation
+
+#Keywords
+
+Node.js
+*Express.js
+*RabbitMQ
+*Nodemailer
+*JWT Authentication
+*Security Best Practices
+*File Upload and Manipulation
+*MongoDB
+
+#Achievements
+With this project, I ventured into backend API development with Express.js. Additionally, I incorporated basic RabbitMQ functionality to send email notifications to users regarding incomplete todos. Furthermore, users can upload images for their todos, which are automatically resized, cropped, and stored within the system.
+
