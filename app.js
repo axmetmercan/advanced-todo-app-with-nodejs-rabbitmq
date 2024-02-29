@@ -1,22 +1,22 @@
-const express = require('express');
-const todoRouter = require('./routes/todoRouter');
+const express = require("express");
+const todoRouter = require("./routes/todoRouter");
 
 const app = express();
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const helmet = require('helmet');
-const limiter = require('express-rate-limit');
-const hpp = require('hpp');
-const path = require('path');
-const getTime = require('./utils/getDateTime');
-const globalErrorHandler = require('./controllers/errorController');
-const userRouter = require('./routes/userRoutes');
-const cronJob = require('./utils/cronJobs');
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const helmet = require("helmet");
+const limiter = require("express-rate-limit");
+const hpp = require("hpp");
+const path = require("path");
+const getTime = require("./utils/getDateTime");
+const globalErrorHandler = require("./controllers/errorController");
+const userRouter = require("./routes/userRoutes");
+const cronJob = require("./utils/cronJobs");
 
 app.use(helmet());
 
-app.use(express.json({ limit: '10kb' }));
-const staticFilesDirectory = path.join(__dirname, 'public');
+app.use(express.json({ limit: "10kb" }));
+const staticFilesDirectory = path.join(__dirname, "public");
 app.use(express.static(staticFilesDirectory));
 
 // To remove data using defaults
@@ -27,8 +27,8 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(
   hpp({
-    whitelist: ['importance', 'situation'],
-  }),
+    whitelist: ["importance", "situation"],
+  })
 );
 
 const rateLimiterDetails = {
@@ -56,21 +56,21 @@ app.use(rateLimiterGeneral);
 // Prints the requested wep page url
 app.use((req, res, next) => {
   const pre = String(process.env.PORT);
-  console.log(
-    `${req.method} ${req.hostname}/${pre}${req.path} ${getTime()}`,
-  );
+  console.log(`${req.method} ${req.hostname}/${pre}${req.path} ${getTime()}`);
   console.log(req.query);
   next();
 });
-app.use('/api/v1/todos', todoRouter);
-app.use('/api/v1/user', rateLimiterUser, userRouter);
+
+
+app.use("/api/v1/todos", todoRouter);
+app.use("/api/v1/user", rateLimiterUser, userRouter);
 
 // Simple CronJob that returns completed todos
 // It can be used for notification or smth...
 cronJob;
 
 // Deny all other web pages other than above ones.
-app.all('*', (req, res, next) => {
+app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
