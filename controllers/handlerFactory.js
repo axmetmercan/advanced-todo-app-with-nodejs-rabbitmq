@@ -32,51 +32,58 @@ exports.createOne = (Model) =>
   });
 
 exports.cacheExist = (cacheParam) => {
-  catcAsync(async (req, res, next) => {
-    
-  });
+  return async (req, res, next) => {
+    try {
+      const keyExists = await redisClient.exists(cacheParam);
+      console.log("Cache check result:", keyExists);
+
+      if (keyExists === 1) {
+        console.log("Data retrieved from cache.");
+        const cacheResult = await redisClient.get(cacheParam);
+        const docs = JSON.parse(cacheResult);
+
+        return res.status(200).json({
+          status: "success",
+          source: "cache",
+          results: docs.length,
+          data: {
+            docs,
+          },
+        });
+      }
+
+      console.log("Data not found in cache.");
+      return next();
+    } catch (error) {
+      console.error("Error while checking cache:", error);
+      return next(error);
+    }
+  };
 };
 
 exports.getAll = (Model, cacheParam) =>
   catcAsync(async (req, res, next) => {
-    let isCached = false;
-    let docs = {};
-
-    // Checks whether cached object in redis
-    const keyExists = await redisClient.exists(cacheParam);
-    console.log("Key durumu ", keyExists);
-    // If does
-    // Call from cache
-    if (keyExists === 1) {
-      console.log("Cachten geliyo");
-      const cacheResult = await redisClient.get(cacheParam);
-      docs = await JSON.parse(cacheResult);
-      isCached = true;
-    }
+   
     // If does not
     // Call from db and save to the cache
-    else {
-      console.log("no cache");
-      const features = new ApiFeature(Model.find(), req.query)
-        .filter()
-        .sort()
-        .limit()
-        .pagination();
-      if (!features) {
-        return next(
-          new AppError("Something went wrong, there is no feature", 404)
-        );
-      }
-      docs = await features.query;
-      await redisClient.set(cacheParam, JSON.stringify(docs), {
-        EX: 1800, // 5 min cached data
-        NX: false,
-      });
+    const features = new ApiFeature(Model.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .pagination();
+    if (!features) {
+      return next(
+        new AppError("Something went wrong, there is no feature", 404)
+      );
     }
+    docs = await features.query;
+    await redisClient.set(cacheParam, JSON.stringify(docs), {
+      EX: 60*5, // 5 min cached data
+      NX: true,
+    });
 
     res.status(200).json({
       status: "success",
-      isCached: isCached,
       results: docs.length,
       data: {
         docs,
